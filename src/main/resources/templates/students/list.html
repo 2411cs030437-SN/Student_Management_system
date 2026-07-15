@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header class="app-header">
+    <a class="brand" th:href="@{/students}">
+        <span class="brand-mark">SM</span>
+        <span>Student Management</span>
+    </a>
+    <a class="button primary" th:href="@{/students/new}">Add Student</a>
+</header>
+
+<main class="page-shell">
+    <section class="page-title">
+        <div>
+            <p class="eyebrow">Dashboard</p>
+            <h1>Students</h1>
+            <p class="subtitle">Manage student admission records, ranks, and branch details.</p>
+        </div>
+    </section>
+
+    <div class="notice success" th:if="${successMessage}" th:text="${successMessage}"></div>
+
+    <section class="summary-grid">
+        <article class="summary-card">
+            <span>Total Students</span>
+            <strong th:text="${#lists.size(students)}">0</strong>
+        </article>
+        <article class="summary-card">
+            <span>Current View</span>
+            <strong th:if="${(keyword != null && !keyword.isBlank()) or (selectedBranch != null && !selectedBranch.isBlank())}">Filtered</strong>
+            <strong th:unless="${(keyword != null && !keyword.isBlank()) or (selectedBranch != null && !selectedBranch.isBlank())}">All</strong>
+        </article>
+    </section>
+
+    <section class="branch-grid" th:if="${!#lists.isEmpty(branchCounts)}">
+        <article class="branch-card" th:each="item : ${branchCounts}">
+            <span th:text="${item.branch}">CSE</span>
+            <strong th:text="${item.total}">0</strong>
+        </article>
+    </section>
+
+    <section class="panel">
+        <form class="search-bar" th:action="@{/students}" method="get">
+            <input type="search" name="keyword" placeholder="Search by name, roll no, or branch" th:value="${keyword}">
+            <select name="branch">
+                <option value="">All Branches</option>
+                <option th:each="branchName : ${branches}"
+                        th:value="${branchName}"
+                        th:text="${branchName}"
+                        th:selected="${branchName == selectedBranch}">CSE</option>
+            </select>
+            <button class="button" type="submit">Search</button>
+            <a class="button ghost" th:href="@{/students}"
+               th:if="${(keyword != null && !keyword.isBlank()) or (selectedBranch != null && !selectedBranch.isBlank())}">Clear</a>
+        </form>
+
+        <div class="active-filters"
+             th:if="${(keyword != null && !keyword.isBlank()) or (selectedBranch != null && !selectedBranch.isBlank())}">
+            <span>Active filters</span>
+            <strong th:if="${keyword != null && !keyword.isBlank()}" th:text="'Search: ' + ${keyword}">Search</strong>
+            <strong th:if="${selectedBranch != null && !selectedBranch.isBlank()}" th:text="'Branch: ' + ${selectedBranch}">Branch</strong>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Roll No</th>
+                    <th>Admission Year</th>
+                    <th>12th %</th>
+                    <th>EAPCET Rank</th>
+                    <th>Branch</th>
+                    <th>Status</th>
+                    <th class="actions">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(students)}">
+                    <td colspan="9" class="empty-state">
+                        <div class="empty-box">
+                            <strong>No students found</strong>
+                            <span>Add a new student record or clear the current filter.</span>
+                            <a class="button primary" th:href="@{/students/new}">Add Student</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:each="student : ${students}">
+                    <td th:text="${student.id}"></td>
+                    <td>
+                        <strong th:text="${student.name}"></strong>
+                    </td>
+                    <td th:text="${student.rollNo}"></td>
+                    <td th:text="${student.admissionYear}"></td>
+                    <td th:text="${student.twelfthPercentage}"></td>
+                    <td th:text="${student.eapcetRank}"></td>
+                    <td>
+                        <span class="pill" th:text="${student.branch}"></span>
+                    </td>
+                    <td>
+                        <span class="status-pill status-active" th:if="${student.status == 'Active'}" th:text="${student.status}"></span>
+                        <span class="status-pill status-discontinued" th:if="${student.status == 'Discontinued'}" th:text="${student.status}"></span>
+                        <span class="status-pill status-graduated" th:if="${student.status == 'Graduated'}" th:text="${student.status}"></span>
+                    </td>
+                    <td class="actions">
+                        <a class="action-button" th:href="@{/students/{id}(id=${student.id})}">View</a>
+                        <a class="action-button" th:href="@{/students/{id}/edit(id=${student.id})}">Edit</a>
+                        <form th:action="@{/students/{id}/delete(id=${student.id})}" method="post">
+                            <button class="action-button danger" type="submit" data-confirm="Delete this student?">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

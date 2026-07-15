@@ -1,0 +1,93 @@
+ <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Student Form</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header class="app-header">
+    <a class="brand" th:href="@{/students}">
+        <span class="brand-mark">SM</span>
+        <span>Student Management</span>
+    </a>
+</header>
+
+<main class="page-shell narrow">
+    <section class="page-title compact">
+        <div>
+            <p class="eyebrow">Student Management</p>
+            <h1 th:text="${pageTitle}">Student Form</h1>
+            <p class="subtitle">Enter basic admission details in a simple student record.</p>
+        </div>
+        <a class="button ghost" th:href="@{/students}">Back</a>
+    </section>
+
+    <form class="student-form panel" th:action="@{${formAction}}" th:object="${student}" method="post">
+        <label>
+            <span>Name</span>
+            <input type="text" th:field="*{name}" placeholder="Enter full name">
+            <small th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+        </label>
+
+        <label>
+            <span>Roll No</span>
+            <input type="text" th:field="*{rollNo}" placeholder="Example: 23A91A0501">
+            <small th:if="${#fields.hasErrors('rollNo')}" th:errors="*{rollNo}"></small>
+        </label>
+
+        <label>
+            <span>Admission Year</span>
+            <input type="number" th:field="*{admissionYear}" min="2000" max="2100" placeholder="2024">
+            <small th:if="${#fields.hasErrors('admissionYear')}" th:errors="*{admissionYear}"></small>
+        </label>
+
+        <label>
+            <span>12th Percentage</span>
+            <input type="number" th:field="*{twelfthPercentage}" min="0" max="100" step="0.01" placeholder="92.50">
+            <small th:if="${#fields.hasErrors('twelfthPercentage')}" th:errors="*{twelfthPercentage}"></small>
+        </label>
+
+        <label>
+            <span>EAPCET Rank</span>
+            <input type="number" th:field="*{eapcetRank}" min="1" placeholder="15000">
+            <small th:if="${#fields.hasErrors('eapcetRank')}" th:errors="*{eapcetRank}"></small>
+        </label>
+
+        <label>
+            <span>Branch</span>
+            <input type="text" th:field="*{branch}" placeholder="CSE, ECE, EEE, Civil">
+            <small th:if="${#fields.hasErrors('branch')}" th:errors="*{branch}"></small>
+        </label>
+
+        <label>
+            <span>Status</span>
+            <select th:field="*{status}">
+                <option th:each="statusName : ${statusOptions}"
+                        th:value="${statusName}"
+                        th:text="${statusName}">Active</option>
+            </select>
+            <small th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></small>
+        </label>
+
+        <label>
+            <span>Phone</span>
+            <input type="text" th:field="*{phone}" placeholder="+91 98765 43210">
+            <small th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small>
+        </label>
+
+        <label>
+            <span>Address / Other Details</span>
+            <textarea th:field="*{address}" placeholder="Address or short note"></textarea>
+            <small th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></small>
+        </label>
+
+        <div class="form-actions">
+            <button class="button primary" type="submit">Save Student</button>
+            <a class="button ghost" th:href="@{/students}">Cancel</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

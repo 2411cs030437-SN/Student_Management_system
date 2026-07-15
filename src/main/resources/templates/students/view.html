@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${student.name}">Student Details</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header class="app-header">
+    <a class="brand" th:href="@{/students}">
+        <span class="brand-mark">SM</span>
+        <span>Student Management</span>
+    </a>
+</header>
+
+<main class="page-shell narrow">
+    <section class="page-title compact">
+        <div>
+            <p class="eyebrow">Student Details</p>
+            <h1 th:text="${student.name}">Student Name</h1>
+            <p class="subtitle">Review the saved admission details and update them when needed.</p>
+        </div>
+        <a class="button ghost" th:href="@{/students}">Back</a>
+    </section>
+
+    <section class="details panel">
+        <dl>
+            <div>
+                <dt>ID</dt>
+                <dd th:text="${student.id}"></dd>
+            </div>
+            <div>
+                <dt>Roll No</dt>
+                <dd th:text="${student.rollNo}"></dd>
+            </div>
+            <div>
+                <dt>Admission Year</dt>
+                <dd th:text="${student.admissionYear}"></dd>
+            </div>
+            <div>
+                <dt>12th Percentage</dt>
+                <dd th:text="${student.twelfthPercentage}"></dd>
+            </div>
+            <div>
+                <dt>EAPCET Rank</dt>
+                <dd th:text="${student.eapcetRank}"></dd>
+            </div>
+            <div>
+                <dt>Branch</dt>
+                <dd th:text="${student.branch}"></dd>
+            </div>
+            <div>
+                <dt>Status</dt>
+                <dd th:text="${student.status}"></dd>
+            </div>
+            <div>
+                <dt>Phone</dt>
+                <dd th:text="${student.phone}"></dd>
+            </div>
+            <div>
+                <dt>Address / Other Details</dt>
+                <dd th:text="${student.address}"></dd>
+            </div>
+        </dl>
+    </section>
+
+    <div class="form-actions">
+        <a class="button primary" th:href="@{/students/{id}/edit(id=${student.id})}">Edit Student</a>
+        <form th:action="@{/students/{id}/delete(id=${student.id})}" method="post">
+            <button class="button danger" type="submit" data-confirm="Delete this student?">Delete</button>
+        </form>
+    </div>
+</main>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
