@@ -1,93 +1,142 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${pageTitle}">Student Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<header class="app-header">
-    <a class="brand" th:href="@{/students}">
-        <span class="brand-mark">SM</span>
-        <span>Student Management</span>
-    </a>
-</header>
+<div class="app-shell no-sidebar">
+    <div class="app-main">
+        <header class="erp-topbar">
+            <div class="d-flex align-items-center gap-2">
+                <span class="landing-brand-mark"><i class="bi bi-mortarboard-fill"></i></span>
+                <div>
+                    <p class="topbar-kicker">Student Record</p>
+                    <h1 th:text="${pageTitle}">Student Form</h1>
+                </div>
+            </div>
+            <div class="topbar-actions">
+                <a class="btn btn-outline-primary" th:href="@{/students}"><i class="bi bi-arrow-left me-2"></i>Back</a>
+                <form th:action="@{/logout}" method="post">
+                    <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
+                </form>
+            </div>
+        </header>
 
-<main class="page-shell narrow">
-    <section class="page-title compact">
-        <div>
-            <p class="eyebrow">Student Management</p>
-            <h1 th:text="${pageTitle}">Student Form</h1>
-            <p class="subtitle">Enter basic admission details in a simple student record.</p>
-        </div>
-        <a class="button ghost" th:href="@{/students}">Back</a>
-    </section>
+        <main class="content-area content-narrow">
+            <section class="page-intro compact fade-in">
+                <div>
+                    <span class="section-label">Admissions Office</span>
+                    <h2 th:text="${pageTitle}">Student Form</h2>
+                    <p>Capture accurate admission, academic, contact, and branch information for the student profile.</p>
+                </div>
+            </section>
 
-    <form class="student-form panel" th:action="@{${formAction}}" th:object="${student}" method="post">
-        <label>
-            <span>Name</span>
-            <input type="text" th:field="*{name}" placeholder="Enter full name">
-            <small th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
-        </label>
+            <form class="erp-card student-form fade-in" th:action="@{${formAction}}" th:object="${student}" method="post">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="name">Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input id="name" class="form-control" type="text" th:field="*{name}" maxlength="100" autocomplete="name" placeholder="Enter full name">
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    </div>
 
-        <label>
-            <span>Roll No</span>
-            <input type="text" th:field="*{rollNo}" placeholder="Example: 23A91A0501">
-            <small th:if="${#fields.hasErrors('rollNo')}" th:errors="*{rollNo}"></small>
-        </label>
+                    <div class="form-field">
+                        <label for="rollNo">Roll No</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+                            <input id="rollNo" class="form-control" type="text" th:field="*{rollNo}" maxlength="30" autocapitalize="characters" placeholder="Example: 23A91A0501">
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('rollNo')}" th:errors="*{rollNo}"></div>
+                    </div>
 
-        <label>
-            <span>Admission Year</span>
-            <input type="number" th:field="*{admissionYear}" min="2000" max="2100" placeholder="2024">
-            <small th:if="${#fields.hasErrors('admissionYear')}" th:errors="*{admissionYear}"></small>
-        </label>
+                    <div class="form-field">
+                        <label for="admissionYear">Admission Year</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                            <input id="admissionYear" class="form-control numeric-input" type="text" th:field="*{admissionYear}" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="2026">
+                        </div>
+                        <div class="form-hint">Use a 4 digit year, for example 2026.</div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('admissionYear')}" th:errors="*{admissionYear}"></div>
+                    </div>
 
-        <label>
-            <span>12th Percentage</span>
-            <input type="number" th:field="*{twelfthPercentage}" min="0" max="100" step="0.01" placeholder="92.50">
-            <small th:if="${#fields.hasErrors('twelfthPercentage')}" th:errors="*{twelfthPercentage}"></small>
-        </label>
+                    <div class="form-field">
+                        <label for="twelfthPercentage">12th Percentage</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-percent"></i></span>
+                            <input id="twelfthPercentage" class="form-control numeric-input" type="text" th:field="*{twelfthPercentage}" inputmode="decimal" pattern="^(100([.][0-9]{1,2})?|[0-9]{1,2}([.][0-9]{1,2})?)$" placeholder="92.50">
+                        </div>
+                        <div class="form-hint">Enter marks from 0 to 100, up to 2 decimals.</div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('twelfthPercentage')}" th:errors="*{twelfthPercentage}"></div>
+                    </div>
 
-        <label>
-            <span>EAPCET Rank</span>
-            <input type="number" th:field="*{eapcetRank}" min="1" placeholder="15000">
-            <small th:if="${#fields.hasErrors('eapcetRank')}" th:errors="*{eapcetRank}"></small>
-        </label>
+                    <div class="form-field">
+                        <label for="eapcetRank">EAPCET Rank</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-trophy"></i></span>
+                            <input id="eapcetRank" class="form-control numeric-input" type="text" th:field="*{eapcetRank}" inputmode="numeric" pattern="[0-9]+" maxlength="7" placeholder="15000">
+                        </div>
+                        <div class="form-hint">Enter digits only, without commas.</div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('eapcetRank')}" th:errors="*{eapcetRank}"></div>
+                    </div>
 
-        <label>
-            <span>Branch</span>
-            <input type="text" th:field="*{branch}" placeholder="CSE, ECE, EEE, Civil">
-            <small th:if="${#fields.hasErrors('branch')}" th:errors="*{branch}"></small>
-        </label>
+                    <div class="form-field">
+                        <label for="branch">Branch</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-diagram-3"></i></span>
+                            <input id="branch" class="form-control" type="text" th:field="*{branch}" maxlength="100" placeholder="Example: CSE, ECE, CSE - AI & ML">
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('branch')}" th:errors="*{branch}"></div>
+                    </div>
 
-        <label>
-            <span>Status</span>
-            <select th:field="*{status}">
-                <option th:each="statusName : ${statusOptions}"
-                        th:value="${statusName}"
-                        th:text="${statusName}">Active</option>
-            </select>
-            <small th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></small>
-        </label>
+                    <div class="form-field">
+                        <label for="status">Status</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-activity"></i></span>
+                            <select id="status" class="form-select" th:field="*{status}">
+                                <option th:each="statusName : ${statusOptions}"
+                                        th:value="${statusName}"
+                                        th:text="${statusName}">Active</option>
+                            </select>
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>
+                    </div>
 
-        <label>
-            <span>Phone</span>
-            <input type="text" th:field="*{phone}" placeholder="+91 98765 43210">
-            <small th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small>
-        </label>
+                    <div class="form-field">
+                        <label for="phone">Phone</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                            <input id="phone" class="form-control" type="tel" th:field="*{phone}" inputmode="tel" maxlength="15" autocomplete="tel" placeholder="+91 98765 43210">
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                    </div>
 
-        <label>
-            <span>Address / Other Details</span>
-            <textarea th:field="*{address}" placeholder="Address or short note"></textarea>
-            <small th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></small>
-        </label>
+                    <div class="form-field full">
+                        <label for="address">Address / Other Details</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                            <textarea id="address" class="form-control" th:field="*{address}" maxlength="255" placeholder="Hostel/day scholar, guardian details, or address"></textarea>
+                        </div>
+                        <div class="form-hint">Keep this short. Maximum 255 characters.</div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+                    </div>
+                </div>
 
-        <div class="form-actions">
-            <button class="button primary" type="submit">Save Student</button>
-            <a class="button ghost" th:href="@{/students}">Cancel</a>
-        </div>
-    </form>
-</main>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit"><i class="bi bi-check2-circle me-2"></i>Save Student</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/students}">Cancel</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
 </body>
 </html>

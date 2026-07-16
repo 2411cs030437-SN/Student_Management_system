@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -44,6 +45,14 @@ public class StudentServiceImpl implements StudentService {
     public Student findById(Long id) {
         return studentRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Student not found with id " + id));
+    }
+
+    @Override
+    public Optional<Student> findByRollNoAndPhone(String rollNo, String phone) {
+        if (rollNo == null || phone == null || rollNo.isBlank() || phone.isBlank()) {
+            return Optional.empty();
+        }
+        return studentRepository.findByRollNoAndPhone(rollNo.trim(), phone.trim());
     }
 
     @Override

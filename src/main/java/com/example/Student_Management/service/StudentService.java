@@ -4,6 +4,7 @@ import com.example.Student_Management.model.Student;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface StudentService {
 
@@ -14,6 +15,8 @@ public interface StudentService {
     List<Map<String, Object>> countByBranch();
 
     Student findById(Long id);
+
+    Optional<Student> findByRollNoAndPhone(String rollNo, String phone);
 
     void create(Student student);
 

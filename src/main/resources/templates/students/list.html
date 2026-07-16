@@ -3,125 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Students</title>
+    <title>College ERP | Students</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<header class="app-header">
-    <a class="brand" th:href="@{/students}">
-        <span class="brand-mark">SM</span>
-        <span>Student Management</span>
-    </a>
-    <a class="button primary" th:href="@{/students/new}">Add Student</a>
-</header>
+<div class="app-shell no-sidebar">
+    <div class="app-main">
+        <header class="erp-topbar">
+            <div class="d-flex align-items-center gap-2">
+                <span class="landing-brand-mark"><i class="bi bi-mortarboard-fill"></i></span>
+                <div>
+                    <p class="topbar-kicker">Student Management System</p>
+                    <h1>Dashboard</h1>
+                </div>
+            </div>
+            <div class="topbar-actions">
+                <a class="btn btn-primary" th:href="@{/students/new}"><i class="bi bi-plus-lg me-2"></i>Add Student</a>
+                <form th:action="@{/logout}" method="post">
+                    <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
+                </form>
+            </div>
+        </header>
 
-<main class="page-shell">
-    <section class="page-title">
-        <div>
-            <p class="eyebrow">Dashboard</p>
-            <h1>Students</h1>
-            <p class="subtitle">Manage student admission records, ranks, and branch details.</p>
-        </div>
-    </section>
+        <main class="content-area">
+            <div class="toast-container position-fixed top-0 end-0 p-3">
+                <div class="toast success-toast border-0" role="alert" aria-live="assertive" aria-atomic="true" th:if="${successMessage}">
+                    <div class="toast-header">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <strong class="me-auto">Success</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body" th:text="${successMessage}">Student saved successfully.</div>
+                </div>
+                <div class="toast error-toast border-0" role="alert" aria-live="assertive" aria-atomic="true" th:if="${errorMessage}">
+                    <div class="toast-header">
+                        <i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
+                        <strong class="me-auto">Error</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body" th:text="${errorMessage}">Unable to complete the request.</div>
+                </div>
+            </div>
 
-    <div class="notice success" th:if="${successMessage}" th:text="${successMessage}"></div>
+            <section class="page-intro fade-in" id="dashboard">
+                <div>
+                    <span class="section-label">College ERP Overview</span>
+                    <h2>Student operations at a glance</h2>
+                    <p>Track admissions, academic status, branch strength, and recent records from one polished workspace.</p>
+                </div>
+            </section>
 
-    <section class="summary-grid">
-        <article class="summary-card">
-            <span>Total Students</span>
-            <strong th:text="${#lists.size(students)}">0</strong>
-        </article>
-        <article class="summary-card">
-            <span>Current View</span>
-            <strong th:if="${(keyword != null && !keyword.isBlank()) or (selectedBranch != null && !selectedBranch.isBlank())}">Filtered</strong>
-            <strong th:unless="${(keyword != null && !keyword.isBlank()) or (selectedBranch != null && !selectedBranch.isBlank())}">All</strong>
-        </article>
-    </section>
+            <section class="metric-grid fade-in">
+                <article class="metric-card">
+                    <span class="metric-icon bg-primary-subtle text-primary"><i class="bi bi-people-fill"></i></span>
+                    <p>Total Students</p>
+                    <strong th:text="${totalStudents}">0</strong>
+                </article>
+                <article class="metric-card">
+                    <span class="metric-icon bg-success-subtle text-success"><i class="bi bi-person-check-fill"></i></span>
+                    <p>Active Students</p>
+                    <strong th:text="${activeStudents}">0</strong>
+                </article>
+                <article class="metric-card">
+                    <span class="metric-icon bg-info-subtle text-info"><i class="bi bi-award-fill"></i></span>
+                    <p>Graduated Students</p>
+                    <strong th:text="${graduatedStudents}">0</strong>
+                </article>
+                <article class="metric-card">
+                    <span class="metric-icon bg-warning-subtle text-warning"><i class="bi bi-calendar2-plus-fill"></i></span>
+                    <p>Admitted This Year</p>
+                    <strong th:text="${admittedThisYear}">0</strong>
+                </article>
+            </section>
 
-    <section class="branch-grid" th:if="${!#lists.isEmpty(branchCounts)}">
-        <article class="branch-card" th:each="item : ${branchCounts}">
-            <span th:text="${item.branch}">CSE</span>
-            <strong th:text="${item.total}">0</strong>
-        </article>
-    </section>
-
-    <section class="panel">
-        <form class="search-bar" th:action="@{/students}" method="get">
-            <input type="search" name="keyword" placeholder="Search by name, roll no, or branch" th:value="${keyword}">
-            <select name="branch">
-                <option value="">All Branches</option>
-                <option th:each="branchName : ${branches}"
-                        th:value="${branchName}"
-                        th:text="${branchName}"
-                        th:selected="${branchName == selectedBranch}">CSE</option>
-            </select>
-            <button class="button" type="submit">Search</button>
-            <a class="button ghost" th:href="@{/students}"
-               th:if="${(keyword != null && !keyword.isBlank()) or (selectedBranch != null && !selectedBranch.isBlank())}">Clear</a>
-        </form>
-
-        <div class="active-filters"
-             th:if="${(keyword != null && !keyword.isBlank()) or (selectedBranch != null && !selectedBranch.isBlank())}">
-            <span>Active filters</span>
-            <strong th:if="${keyword != null && !keyword.isBlank()}" th:text="'Search: ' + ${keyword}">Search</strong>
-            <strong th:if="${selectedBranch != null && !selectedBranch.isBlank()}" th:text="'Branch: ' + ${selectedBranch}">Branch</strong>
-        </div>
-
-        <div class="table-wrap">
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Roll No</th>
-                    <th>Admission Year</th>
-                    <th>12th %</th>
-                    <th>EAPCET Rank</th>
-                    <th>Branch</th>
-                    <th>Status</th>
-                    <th class="actions">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:if="${#lists.isEmpty(students)}">
-                    <td colspan="9" class="empty-state">
-                        <div class="empty-box">
-                            <strong>No students found</strong>
-                            <span>Add a new student record or clear the current filter.</span>
-                            <a class="button primary" th:href="@{/students/new}">Add Student</a>
+            <div class="dashboard-grid fade-in">
+                <section class="erp-card">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-label">Latest Records</span>
+                            <h3>Recent Students</h3>
                         </div>
-                    </td>
-                </tr>
-                <tr th:each="student : ${students}">
-                    <td th:text="${student.id}"></td>
-                    <td>
-                        <strong th:text="${student.name}"></strong>
-                    </td>
-                    <td th:text="${student.rollNo}"></td>
-                    <td th:text="${student.admissionYear}"></td>
-                    <td th:text="${student.twelfthPercentage}"></td>
-                    <td th:text="${student.eapcetRank}"></td>
-                    <td>
-                        <span class="pill" th:text="${student.branch}"></span>
-                    </td>
-                    <td>
-                        <span class="status-pill status-active" th:if="${student.status == 'Active'}" th:text="${student.status}"></span>
-                        <span class="status-pill status-discontinued" th:if="${student.status == 'Discontinued'}" th:text="${student.status}"></span>
-                        <span class="status-pill status-graduated" th:if="${student.status == 'Graduated'}" th:text="${student.status}"></span>
-                    </td>
-                    <td class="actions">
-                        <a class="action-button" th:href="@{/students/{id}(id=${student.id})}">View</a>
-                        <a class="action-button" th:href="@{/students/{id}/edit(id=${student.id})}">Edit</a>
-                        <form th:action="@{/students/{id}/delete(id=${student.id})}" method="post">
-                            <button class="action-button danger" type="submit" data-confirm="Delete this student?">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle mini-table">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Roll No</th>
+                                <th>Branch</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${#lists.isEmpty(students)}">
+                                <td colspan="4" class="text-center text-muted py-4">No recent students available.</td>
+                            </tr>
+                            <tr th:each="student, iterStat : ${students}" th:if="${iterStat.index < 5}">
+                                <td>
+                                    <div class="student-cell">
+                                        <span class="avatar-sm" th:text="${student.name != null and !student.name.isBlank() ? #strings.substring(student.name, 0, 1) : 'S'}">S</span>
+                                        <strong th:text="${student.name}">Student Name</strong>
+                                    </div>
+                                </td>
+                                <td th:text="${student.rollNo}">ROLL</td>
+                                <td><span class="branch-pill" th:text="${student.branch}">CSE</span></td>
+                                <td><span th:classappend="${student.status == 'Active'} ? ' status-active' : (${student.status == 'Graduated'} ? ' status-graduated' : ' status-discontinued')" class="status-pill" th:text="${student.status}">Active</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="erp-card">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-label">Branch Summary</span>
+                            <h3>Department Strength</h3>
+                        </div>
+                    </div>
+                    <div class="branch-summary">
+                        <article th:if="${#lists.isEmpty(branchCounts)}" class="branch-summary-card">
+                            <span>No branches yet</span>
+                            <strong>0</strong>
+                        </article>
+                        <article class="branch-summary-card" th:each="item : ${branchCounts}">
+                            <span th:text="${item.branch}">CSE</span>
+                            <strong th:text="${item.total}">0</strong>
+                        </article>
+                    </div>
+                </section>
+            </div>
+
+            <section class="erp-card student-list-card fade-in" id="students">
+                <div class="section-heading student-list-heading">
+                    <div>
+                        <span class="section-label">Student Directory</span>
+                        <h3>All Students</h3>
+                    </div>
+                    <span class="count-badge" th:text="${totalStudents} + ' records'">0 records</span>
+                </div>
+
+                <form class="student-toolbar" th:action="@{/students}" method="get">
+                    <div class="input-group search-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input class="form-control" type="search" name="keyword" placeholder="Search name, roll no, or branch" th:value="${keyword}">
+                    </div>
+                    <div class="input-group filter-group">
+                        <span class="input-group-text"><i class="bi bi-diagram-3"></i></span>
+                        <select class="form-select" name="branch" aria-label="Filter by branch">
+                            <option value="">All Branches</option>
+                            <option th:each="branchName : ${branches}"
+                                    th:value="${branchName}"
+                                    th:text="${branchName}"
+                                    th:selected="${branchName == selectedBranch}">CSE</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" type="submit"><i class="bi bi-funnel me-2"></i>Apply</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/students}"
+                       th:if="${(keyword != null && !keyword.isBlank()) or (selectedBranch != null && !selectedBranch.isBlank())}">Clear</a>
+                </form>
+
+                <div class="active-filters"
+                     th:if="${(keyword != null && !keyword.isBlank()) or (selectedBranch != null && !selectedBranch.isBlank())}">
+                    <span>Active filters</span>
+                    <strong th:if="${keyword != null && !keyword.isBlank()}" th:text="'Search: ' + ${keyword}">Search</strong>
+                    <strong th:if="${selectedBranch != null && !selectedBranch.isBlank()}" th:text="'Branch: ' + ${selectedBranch}">Branch</strong>
+                </div>
+
+                <div class="table-responsive table-shell">
+                    <table class="table align-middle student-table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Roll No</th>
+                            <th>Admission Year</th>
+                            <th>12th %</th>
+                            <th>EAPCET Rank</th>
+                            <th>Branch</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(students)}">
+                            <td colspan="9">
+                                <div class="empty-state">
+                                    <i class="bi bi-inboxes"></i>
+                                    <strong>No students found</strong>
+                                    <span>Add a new student record or clear the current filter.</span>
+                                    <a class="btn btn-primary" th:href="@{/students/new}">Add Student</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:each="student : ${students}">
+                            <td class="text-muted" th:text="${student.id}">1</td>
+                            <td>
+                                <div class="student-cell">
+                                    <span class="avatar-sm" th:text="${student.name != null and !student.name.isBlank() ? #strings.substring(student.name, 0, 1) : 'S'}">S</span>
+                                    <strong th:text="${student.name}">Student Name</strong>
+                                </div>
+                            </td>
+                            <td th:text="${student.rollNo}">ROLL</td>
+                            <td th:text="${student.admissionYear}">2026</td>
+                            <td th:text="${student.twelfthPercentage}">90</td>
+                            <td th:text="${student.eapcetRank}">1200</td>
+                            <td><span class="branch-pill" th:text="${student.branch}">CSE</span></td>
+                            <td><span th:classappend="${student.status == 'Active'} ? ' status-active' : (${student.status == 'Graduated'} ? ' status-graduated' : ' status-discontinued')" class="status-pill" th:text="${student.status}">Active</span></td>
+                            <td>
+                                <div class="action-group justify-content-end">
+                                    <a class="btn btn-sm btn-light" th:href="@{/students/{id}(id=${student.id})}" title="View"><i class="bi bi-eye"></i></a>
+                                    <a class="btn btn-sm btn-light" th:href="@{/students/{id}/edit(id=${student.id})}" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                                    <button class="btn btn-sm btn-danger" type="button"
+                                            data-delete-trigger
+                                            th:data-delete-url="@{/students/{id}/delete(id=${student.id})}"
+                                            th:data-student-name="${student.name}"
+                                            th:data-roll-no="${student.rollNo}"
+                                            title="Delete"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination-shell">
+                    <span th:text="'Showing ' + ${totalStudents} + ' records'">Showing 0 records</span>
+                    <nav aria-label="Student pagination">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteStudentModal" tabindex="-1" aria-labelledby="deleteStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="deleteStudentModalLabel"><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Delete Student</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2">You are about to delete this student record.</p>
+                <div class="delete-summary">
+                    <strong data-delete-name>Student Name</strong>
+                    <span data-delete-roll>Roll No</span>
+                </div>
+                <p class="text-danger fw-semibold mb-0">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" data-delete-form>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-2"></i>Delete</button>
+                </form>
+            </div>
         </div>
-    </section>
-</main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/js/app.js}"></script>
 </body>
 </html>

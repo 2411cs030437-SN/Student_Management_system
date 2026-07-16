@@ -102,7 +102,7 @@ public class Student {
     }
 
     public void setBranch(String branch) {
-        this.branch = branch;
+    this.branch = (branch == null) ? null : branch.trim().toUpperCase();
     }
 
     public String getStatus() {

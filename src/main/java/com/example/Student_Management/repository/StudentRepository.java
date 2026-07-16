@@ -92,6 +92,16 @@ public class StudentRepository {
         return jdbcTemplate.query(sql, STUDENT_ROW_MAPPER, id).stream().findFirst();
     }
 
+    public Optional<Student> findByRollNoAndPhone(String rollNo, String phone) {
+        String sql = """
+                SELECT id, name, roll_no, admission_year, twelfth_percentage,
+                       eapcet_rank, branch, status, phone, address
+                FROM students
+                WHERE roll_no = ? AND phone = ?
+                """;
+        return jdbcTemplate.query(sql, STUDENT_ROW_MAPPER, rollNo, phone).stream().findFirst();
+    }
+
     public List<String> findBranches() {
         String sql = """
                 SELECT DISTINCT branch
